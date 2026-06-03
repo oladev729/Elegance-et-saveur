@@ -1,39 +1,32 @@
 import { useState } from 'react'
+import Navigation from './components/Navigation'
 import HomePage from './components/HomePage'
+import AboutPage from './components/AboutPage'
+import ContactPage from './components/ContactPage'
+import FAQPage from './components/FAQPage'
+import DeliveryPage from './components/DeliveryPage'
+import LegalPage from './components/LegalPage'
 import CategoryList from './components/CategoryList'
 import ProductList from './components/ProductList'
 import './App.css'
 
 function App() {
+  const [currentPage, setCurrentPage] = useState('home')
   const [selectedCategory, setSelectedCategory] = useState(null)
-  const [showHomePage, setShowHomePage] = useState(true)
 
   const handleSelectCategory = (category) => {
     setSelectedCategory(category)
-    setShowHomePage(false)
+    setCurrentPage('products')
   }
 
-  const handleBackToHome = () => {
-    setShowHomePage(true)
-    setSelectedCategory(null)
-  }
-
-  return (
-    <div className="app">
-      <header className="app-header">
-        <h1>Elegance et Saveur</h1>
-        <p>Parfums, Abayas, Pâtisserie & Cuisine</p>
-        {!showHomePage && (
-          <button className="back-home-btn" onClick={handleBackToHome}>
-            ← Retour à l'accueil
-          </button>
-        )}
-      </header>
-      
-      <main className="app-main">
-        {showHomePage ? (
-          <HomePage onSelectCategory={handleSelectCategory} />
-        ) : (
+  const renderPage = () => {
+    switch (currentPage) {
+      case 'home':
+        return <HomePage onSelectCategory={handleSelectCategory} />
+      case 'about':
+        return <AboutPage />
+      case 'products':
+        return (
           <>
             <CategoryList 
               onSelectCategory={handleSelectCategory}
@@ -41,7 +34,29 @@ function App() {
             />
             <ProductList category={selectedCategory} />
           </>
-        )}
+        )
+      case 'contact':
+        return <ContactPage />
+      case 'faq':
+        return <FAQPage />
+      case 'delivery':
+        return <DeliveryPage />
+      default:
+        return <HomePage onSelectCategory={handleSelectCategory} />
+    }
+  }
+
+  return (
+    <div className="app">
+      <header className="app-header">
+        <h1>Elegance et Saveur</h1>
+        <p>Parfums, Abayas, Pâtisserie & Cuisine</p>
+      </header>
+      
+      <Navigation currentPage={currentPage} setCurrentPage={setCurrentPage} />
+      
+      <main className="app-main">
+        {renderPage()}
       </main>
       
       <footer className="app-footer">
